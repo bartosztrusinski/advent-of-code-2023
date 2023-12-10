@@ -1,18 +1,25 @@
 const fs = require('fs');
 const readline = require('readline');
+const path = require('path');
+
+const numbers = [];
+const allDigitsPattern = /\d/g;
 
 const rl = readline.createInterface({
-  input: fs.createReadStream('input.txt'),
+  input: fs.createReadStream(path.resolve(__dirname, 'input.txt')),
   crlfDelay: Infinity,
 });
 
-const numbers = [];
+const run = () => {
+  rl.on('line', (line) => {
+    const allDigits = line.match(allDigitsPattern);
+    const firstDigit = allDigits[0];
+    const lastDigit = allDigits.at(-1);
 
-rl.on('line', (line) => {
-  const allDigits = [...line.matchAll(/\d/g)];
-  const firstAndLastDigits = Number(allDigits[0] + allDigits.at(-1));
+    numbers.push(Number(`${firstDigit}${lastDigit}`));
+  }).on('close', () => {
+    console.log(numbers.reduce((acc, cur) => acc + cur, 0));
+  });
+};
 
-  numbers.push(firstAndLastDigits);
-}).on('close', () => {
-  console.log(numbers.reduce((acc, cur) => acc + cur, 0));
-});
+run();
