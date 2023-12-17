@@ -2,13 +2,7 @@ const fs = require('fs');
 const readline = require('readline');
 const path = require('path');
 
-const MAX_CUBE_COUNT = {
-  red: 12,
-  green: 13,
-  blue: 14,
-};
-
-const possibleGameIds = [];
+const minimumCubesPowers = [];
 
 const rl = readline.createInterface({
   input: fs.createReadStream(path.resolve(__dirname, '../inputs/day_2.txt')),
@@ -19,16 +13,12 @@ const run = () => {
   rl.on('line', (input) => {
     const gameSets = getGameSets(input);
     const gameCubeDraws = getGameCubeDraws(gameSets);
+    const minimumCubeCounts = getMinimumCubeCounts(gameCubeDraws);
+    const minimumCubesPower = getMinimumCubePower(minimumCubeCounts);
 
-    const isGamePossible = gameCubeDraws.every(
-      ([cubeCount, cubeColor]) => cubeCount <= MAX_CUBE_COUNT[cubeColor]
-    );
-
-    if (isGamePossible) {
-      possibleGameIds.push(getGameId(input));
-    }
+    minimumCubesPowers.push(minimumCubesPower);
   }).on('close', () => {
-    console.log(possibleGameIds.reduce((sum, id) => sum + Number(id), 0));
+    console.log(minimumCubesPowers.reduce((sum, id) => sum + Number(id), 0));
   });
 };
 
@@ -45,10 +35,21 @@ const getGameCubeDraws = (gameSets) => {
     .flat();
 };
 
-const getGameId = (gameInput) => {
-  const firstSpaceIndex = gameInput.indexOf(' ');
-  const firstColonIndex = gameInput.indexOf(':');
-  return gameInput.slice(firstSpaceIndex + 1, firstColonIndex);
+const getMinimumCubeCounts = (gameCubeDraws) => {
+  return gameCubeDraws.reduce(
+    (minimumCubeCounts, [cubeCount, cubeColor]) => ({
+      ...minimumCubeCounts,
+      [cubeColor]: Math.max(cubeCount, minimumCubeCounts[cubeColor]),
+    }),
+    { red: 0, green: 0, blue: 0 }
+  );
+};
+
+const getMinimumCubePower = (minimumCubeCounts) => {
+  return Object.values(minimumCubeCounts).reduce(
+    (sum, count) => sum * count,
+    1
+  );
 };
 
 run();
