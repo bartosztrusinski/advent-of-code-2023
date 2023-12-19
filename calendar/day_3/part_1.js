@@ -3,8 +3,6 @@ const readline = require('readline');
 const path = require('path');
 
 const engineSchematicLines = [];
-const engineNumbers = [];
-const partNumbers = [];
 
 const rl = readline.createInterface({
   input: fs.createReadStream(path.resolve(__dirname, '../inputs/day_3.txt')),
@@ -17,7 +15,10 @@ const run = () => {
   }).on('close', () => {
     const partNumbers = engineSchematicLines.map((line, index) => {
       const engineNumberIndices = getEngineNumberIndices(line);
-      const enginePartIndices = filterEngineParts(engineNumberIndices, index);
+      const enginePartIndices = getEnginePartIndices(
+        engineNumberIndices,
+        index
+      );
 
       return enginePartIndices.map(({ number }) => number);
     });
@@ -46,7 +47,7 @@ const getEngineNumberIndices = (inputString) => {
   return indices;
 };
 
-const filterEngineParts = (engineNumberIndices, lineIndex) => {
+const getEnginePartIndices = (engineNumberIndices, lineIndex) => {
   return engineNumberIndices.filter(({ start, end }) => {
     const symbolsAbove =
       engineSchematicLines[lineIndex - 1]?.substring(start - 1, end + 1) || [];
