@@ -12,15 +12,8 @@ const rl = readline.createInterface({
 const run = () => {
   rl.on('line', (inputLine) => {
     const [winningNumbers, playedNumbers] = getCardNumbers(inputLine);
-
-    const cardHitCount = playedNumbers.reduce(
-      (hitCount, playedNumber) =>
-        winningNumbers.includes(playedNumber) ? hitCount + 1 : hitCount,
-      0
-    );
-
-    const cardPoints = cardHitCount === 0 ? 0 : 2 ** (cardHitCount - 1);
-
+    const cardHitCount = getCardHitCount(winningNumbers, playedNumbers);
+    const cardPoints = computeCardPoints(cardHitCount);
     cardPointSums.push(cardPoints);
   }).on('close', () => {
     console.log(cardPointSums.reduce((sum, cardPoints) => sum + cardPoints, 0));
@@ -42,6 +35,18 @@ const getCardNumbers = (inputLine) => {
     .map(Number);
 
   return [winningNumbers, playedNumbers];
+};
+
+const getCardHitCount = (winningNumbers, playedNumbers) => {
+  return playedNumbers.reduce(
+    (hitCount, playedNumber) =>
+      winningNumbers.includes(playedNumber) ? hitCount + 1 : hitCount,
+    0
+  );
+};
+
+const computeCardPoints = (cardHitCount) => {
+  return cardHitCount === 0 ? 0 : 2 ** (cardHitCount - 1);
 };
 
 run();

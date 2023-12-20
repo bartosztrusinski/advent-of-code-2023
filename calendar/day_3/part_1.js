@@ -5,7 +5,7 @@ const path = require('path');
 const engineSchematicLines = [];
 
 const rl = readline.createInterface({
-  input: fs.createReadStream(path.resolve(__dirname, '../inputs/day_3.txt')),
+  input: fs.createReadStream(path.resolve(__dirname, '../../inputs/day_3.txt')),
   crlfDelay: Infinity,
 });
 

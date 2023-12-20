@@ -11,7 +11,7 @@ const MAX_CUBE_COUNT = {
 const possibleGameIds = [];
 
 const rl = readline.createInterface({
-  input: fs.createReadStream(path.resolve(__dirname, '../inputs/day_2.txt')),
+  input: fs.createReadStream(path.resolve(__dirname, '../../inputs/day_2.txt')),
   crlfDelay: Infinity,
 });
 

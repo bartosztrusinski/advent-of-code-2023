@@ -6,7 +6,7 @@ const numbers = [];
 const allDigitsPattern = /\d/g;
 
 const rl = readline.createInterface({
-  input: fs.createReadStream(path.resolve(__dirname, '../inputs/day_1.txt')),
+  input: fs.createReadStream(path.resolve(__dirname, '../../inputs/day_1.txt')),
   crlfDelay: Infinity,
 });
 
