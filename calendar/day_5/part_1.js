@@ -31,22 +31,14 @@ const getMaps = (almanac) => {
   );
 
   return mapLines.reduce((maps, data) => {
-    const isMapLine = data.includes('map');
+    const isMapStartLine = data.includes('map');
 
-    isMapLine
+    isMapStartLine
       ? maps.push([])
       : maps[maps.length - 1]?.push(data.split(' ').map(Number));
 
     return maps;
   }, []);
-};
-
-const getLowestLocation = (locations) => {
-  return locations.reduce(
-    (lowestLocation, location) =>
-      location < lowestLocation ? location : lowestLocation,
-    Infinity
-  );
 };
 
 const getLocations = (seeds, maps) => {
@@ -74,6 +66,14 @@ const getCorrectRange = (seed, map) => {
 const mapSeed = (seed, range) => {
   const [destinationStart, sourceStart] = range;
   return destinationStart + (seed - sourceStart);
+};
+
+const getLowestLocation = (locations) => {
+  return locations.reduce(
+    (lowestLocation, location) =>
+      location < lowestLocation ? location : lowestLocation,
+    Infinity
+  );
 };
 
 run();
