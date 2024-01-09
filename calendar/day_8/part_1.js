@@ -28,7 +28,7 @@ const run = () => {
 
     nodes.set(nodeId, nextNodeMap);
   }).on('close', () => {
-    const stepCount = calculateStepCount(instructions, nodes);
+    const stepCount = calculateStepCount();
     console.log(stepCount);
   });
 };
@@ -42,7 +42,7 @@ const createNextNodeMap = (nextNodesInput) => {
   return nextNodeMap;
 };
 
-const calculateStepCount = (instructions, nodes) => {
+const calculateStepCount = () => {
   let stepCount = 0;
 
   for (
