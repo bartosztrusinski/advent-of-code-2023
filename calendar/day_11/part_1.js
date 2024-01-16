@@ -100,4 +100,4 @@ const getGalaxyDistancesFrom = ([currentY, currentX], galaxyPositions) => {
   });
 };
 
-run(day, onLineRead, onClose);
+module.exports = () => run(day, onLineRead, onClose);
