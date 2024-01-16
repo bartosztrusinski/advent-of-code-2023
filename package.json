@@ -4,7 +4,8 @@
   "description": "",
   "main": "run.js",
   "scripts": {
-    "day": "node executeDay.js"
+    "day": "node executeDay.js",
+    "setup": "node setupDay.js"
   },
   "author": "",
   "license": "ISC"
