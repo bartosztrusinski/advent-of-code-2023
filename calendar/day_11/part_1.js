@@ -4,17 +4,10 @@ const day = 11;
 
 const space = [];
 const galaxyChar = '#';
-const emptySpaceChar = '.';
+const expansionFactor = 1;
 
 const onLineRead = (inputLine) => {
-  const spaceRow = inputLine.split('');
-
-  // Expand empty space rows
-  if (!spaceRow.includes(galaxyChar)) {
-    space.push([...spaceRow]);
-  }
-
-  space.push([...spaceRow]);
+  space.push(inputLine.split(''));
 };
 
 const onClose = () => {
@@ -24,15 +17,17 @@ const onClose = () => {
     spaceRowSize,
     galaxyPositions
   );
+  const emptySpaceRowIndices = getEmptySpaceRowIndices(galaxyPositions);
 
-  // Expand empty space columns
-  space.forEach((spaceRow) => {
-    emptySpaceColumnIndices.forEach((columnIndex, shiftIndex) => {
-      spaceRow.splice(columnIndex + shiftIndex, 0, emptySpaceChar);
-    });
-  });
+  const galaxyPositionsAfterExpansion = computeGalaxyPositionsAfterExpansion(
+    galaxyPositions,
+    emptySpaceColumnIndices,
+    emptySpaceRowIndices
+  );
 
-  const allGalaxiesDistancesSum = getAllGalaxiesDistancesSum();
+  const allGalaxiesDistancesSum = getGalaxiesDistancesSum(
+    galaxyPositionsAfterExpansion
+  );
 
   console.log(allGalaxiesDistancesSum);
 };
@@ -57,26 +52,46 @@ const getEmptySpaceColumnIndices = (spaceRowSize, galaxyPositions) => {
   );
 };
 
-const getAllGalaxiesDistancesSum = () => {
-  const expandedSpaceRowSize = space[0].length;
-  const expandedSpaceGalaxyPositions = getGalaxyPositions(expandedSpaceRowSize);
+const getEmptySpaceRowIndices = (galaxyPositions) => {
+  return space
+    .map((_, index) => index)
+    .filter((rowIndex) => !galaxyPositions.some(([y]) => y === rowIndex));
+};
 
-  return expandedSpaceGalaxyPositions.reduce(
-    (sum, galaxyPosition, galaxyIndex) => {
-      const galaxyDistanceMap = getGalaxyDistancesFrom(
-        galaxyPosition,
-        expandedSpaceGalaxyPositions.filter((_, index) => index > galaxyIndex)
-      );
+const computeGalaxyPositionsAfterExpansion = (
+  galaxyPositions,
+  emptySpaceColumnIndices,
+  emptySpaceRowIndices
+) => {
+  return galaxyPositions.map(([galaxyY, galaxyX]) => {
+    const expandedRowsBefore = emptySpaceRowIndices.filter(
+      (rowIndex) => rowIndex < galaxyY
+    );
+    const expandedColumnsBefore = emptySpaceColumnIndices.filter(
+      (columnIndex) => columnIndex < galaxyX
+    );
 
-      const galaxyDistancesSum = galaxyDistanceMap.reduce(
-        (sum, distance) => sum + distance,
-        0
-      );
+    return [
+      galaxyY + expandedRowsBefore.length * expansionFactor,
+      galaxyX + expandedColumnsBefore.length * expansionFactor,
+    ];
+  });
+};
 
-      return sum + galaxyDistancesSum;
-    },
-    0
-  );
+const getGalaxiesDistancesSum = (galaxyPositions) => {
+  return galaxyPositions.reduce((sum, galaxyPosition, galaxyIndex) => {
+    const galaxyDistanceMap = getGalaxyDistancesFrom(
+      galaxyPosition,
+      galaxyPositions.filter((_, index) => index > galaxyIndex)
+    );
+
+    const galaxyDistancesSum = galaxyDistanceMap.reduce(
+      (sum, distance) => sum + distance,
+      0
+    );
+
+    return sum + galaxyDistancesSum;
+  }, 0);
 };
 
 const getGalaxyDistancesFrom = ([currentY, currentX], galaxyPositions) => {
