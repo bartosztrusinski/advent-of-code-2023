@@ -14,17 +14,14 @@ const onClose = () => {
   for (const sequence of initializationSequence) {
     const focalLength = Number(sequence.at(-1));
     const label = sequence.slice(0, focalLength ? -2 : -1);
-    const correctBoxIndex = HASH_algorithm(label);
     const operationType = focalLength ? '=' : '-';
-
-    if (!lensBoxes[correctBoxIndex]) {
-      lensBoxes[correctBoxIndex] = new Map();
-    }
+    const boxIndex = HASH_algorithm(label);
+    const box = (lensBoxes[boxIndex] = lensBoxes[boxIndex] ?? new Map());
 
     if (operationType === '-') {
-      lensBoxes[correctBoxIndex].delete(label);
+      box.delete(label);
     } else {
-      lensBoxes[correctBoxIndex].set(label, focalLength);
+      box.set(label, focalLength);
     }
   }
 
