@@ -5,7 +5,6 @@ const day = 14;
 const inputLines = [];
 const cubeRock = '#';
 const roundRock = 'O';
-let load = 0;
 
 const onLineRead = (inputLine) => {
   inputLines.push(inputLine);
