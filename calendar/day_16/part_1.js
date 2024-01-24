@@ -12,12 +12,6 @@ const onLineRead = (inputLine) => {
   contraption.push(inputLine);
 };
 
-const createMatrix = (rows, columns, defaultValue = null) => {
-  return Array(rows)
-    .fill()
-    .map(() => Array(columns).fill(defaultValue));
-};
-
 const onClose = () => {
   const tileEnergyLevels = getTileEnergyLevels();
   const energizedTileCount = tileEnergyLevels.flat().filter(Boolean).length;
@@ -39,6 +33,12 @@ const getTileEnergyLevels = (
   return tileEnergyLevels.map((row) =>
     row.map((tile) => (tile ? tile.size : 0))
   );
+};
+
+const createMatrix = (rows, columns, defaultValue = null) => {
+  return Array(rows)
+    .fill()
+    .map(() => Array(columns).fill(defaultValue));
 };
 
 const energizeTiles = (position, direction, tileEnergyLevels) => {
