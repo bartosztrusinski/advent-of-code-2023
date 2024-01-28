@@ -10,8 +10,8 @@ const onLineRead = (inputLine) => {
 };
 
 const onClose = () => {
-  const [width, height, center] = getDigSiteDimensions();
-  const digSiteGrid = createDigSiteGrid(width, height, center);
+  const [width, height] = getDigSiteDimensions();
+  const digSiteGrid = createDigSiteGrid(width, height);
   const totalMetersDig = computeTotalMetersDig(digSiteGrid);
 
   console.log(totalMetersDig);
@@ -55,21 +55,15 @@ const getDigSiteDimensions = () => {
     }
   }
 
-  const width = maxRight - maxLeft + 1;
-  const height = maxUp - maxDown + 1;
-  const center = [Math.abs(maxLeft), Math.abs(maxUp)];
-
-  return [width, height, center];
+  return [maxRight - maxLeft, maxUp - maxDown];
 };
 
-const createDigSiteGrid = (width, height, center) => {
-  const grid = Array(height)
+const createDigSiteGrid = (width, height) => {
+  const grid = Array(height * 2)
     .fill()
-    .map(() => Array(width).fill('.'));
+    .map(() => Array(width * 2).fill('.'));
 
-  let [x, y] = center;
-
-  console.log(`width: ${width}, height: ${height} center: ${center}`);
+  let [x, y] = [width, height];
 
   for (let i = 0; i < digPlan.length; i++) {
     const [direction, metersToDig] = digPlan[i];
@@ -77,7 +71,7 @@ const createDigSiteGrid = (width, height, center) => {
     switch (direction) {
       case 'R':
         for (let j = x; j < x + metersToDig; j++) {
-          grid[y] ? (grid[y][j] = '#') : console.log(`x: ${x}, y: ${y}`);
+          grid[y][j] = '#';
         }
         x += metersToDig;
         break;
@@ -107,18 +101,14 @@ const createDigSiteGrid = (width, height, center) => {
 
 const computeTotalMetersDig = (grid) => {
   return grid
-    .map((row, rowIndex) => {
+    .map((row, i) => {
       const startDigIndices = row
-        .map((cell, index) =>
-          cell === '#' && row[index - 1] && row[index - 1] === '.' ? index : -1
-        )
-        .filter((index) => index !== -1);
+        .map((cell, idx) => (cell === '#' && row[idx - 1] === '.' ? idx : -1))
+        .filter((idx) => idx !== -1);
 
       const endDigIndices = row
-        .map((cell, index) =>
-          cell === '#' && row[index + 1] && row[index + 1] === '.' ? index : -1
-        )
-        .filter((index) => index !== -1);
+        .map((cell, idx) => (cell === '#' && row[idx + 1] === '.' ? idx : -1))
+        .filter((idx) => idx !== -1);
 
       let isInside = false;
 
@@ -134,33 +124,9 @@ const computeTotalMetersDig = (grid) => {
           return;
         }
 
-        // console.log(`index: ${index} start: ${startIndex} end: ${endIndex} `);
-        // console.log(
-        //   grid[index - 1]?.[startIndex],
-        //   grid[index + 1]?.[endIndex],
-        //   grid[index - 1]?.[startIndex] === grid[index + 1]?.[endIndex]
-        // );
-        // console.log(
-        //   grid[index + 1]?.[startIndex],
-        //   grid[index - 1]?.[endIndex],
-        //   grid[index + 1]?.[startIndex] === grid[index - 1]?.[endIndex]
-        // );
-
-        console.log(rowIndex);
-        console.log(
-          grid[rowIndex - 1]?.join('').slice(startIndex - 1, endIndex + 2)
-        );
-        console.log(row?.join('').slice(startIndex - 1, endIndex + 2));
-        console.log(
-          grid[rowIndex + 1]?.join('').slice(startIndex - 1, endIndex + 2)
-        );
-
         if (
-          (grid[rowIndex - 1] &&
-            grid[rowIndex + 1] &&
-            grid[rowIndex - 1]?.[startIndex] ===
-              grid[rowIndex + 1]?.[endIndex]) ||
-          grid[rowIndex + 1]?.[startIndex] === grid[rowIndex - 1]?.[endIndex]
+          grid[i - 1]?.[startIndex] === grid[i + 1]?.[endIndex] ||
+          grid[i + 1]?.[startIndex] === grid[i - 1]?.[endIndex]
         ) {
           isInside = !isInside;
           points1.push([startIndex, endIndex]);
@@ -174,14 +140,7 @@ const computeTotalMetersDig = (grid) => {
 
       let points1Sum = 0;
 
-      console.log(
-        `index ${rowIndex} startDigIndices: ${startDigIndices} endDigIndices: ${endDigIndices} \nPOINTS1 ${points1} POINTS2 ${points2}`
-      );
-      console.log(points1);
-      console.log(points2);
-
       for (let i = 0; i < points1.length; i += 2) {
-        console.log(points1[i], points1[i + 1]);
         const start =
           typeof points1[i] === 'number' ? points1[i] : points1[i][0];
         const end =
